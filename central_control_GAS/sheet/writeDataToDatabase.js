@@ -29,3 +29,23 @@ function writeToSingleCell(data, lineID, dataType) {
     sheet.getRange(changeIdToRow(lineID), changeDataTypeToColumn(dataType)).setValue(data);
   }
 }
+
+function writeLog(text){
+  const sheet = getSheet("log");
+  const time = new Date().getTime(); // 現在時刻（ミリ秒単位）
+  
+  sheet.insertRowBefore(1); // 一番上に新しい行を挿入
+  sheet.getRange(1, 1).setValue(time);
+  sheet.getRange(1, 2).setValue(text);
+}
+
+function deleteRow(lineID) {
+  const sheet = getSheet("database");
+  const row = changeIdToRow(lineID);
+  
+  if (row === 0) {
+    throw new Error('このLINEIDは登録されていません');
+  }
+  
+  sheet.deleteRow(row);
+}
