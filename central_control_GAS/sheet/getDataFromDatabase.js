@@ -33,6 +33,7 @@ function changeDataTypeToColumn(dataType) {
     }
   }
 
+  writeLog(`changeDataTypeToColumn: ${dataType}は存在しません`);
   throw new Error('dataTypeが見つかりません');
 }
 
@@ -42,6 +43,7 @@ function getSheet(name) {
   const sheet = spreadsheet.getSheetByName(name);
 
   if (!sheet) {
+    writeLog(`getSheet: ${name}は存在しません`);
     throw new Error('シートが見つかりません');
   }
 

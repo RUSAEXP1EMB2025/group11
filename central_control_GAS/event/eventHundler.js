@@ -3,14 +3,16 @@ function doPost(e) {
 
   writeLog(contents);
   
-  const events = JSON.parse(contents).event;
+  const events = JSON.parse(contents).events;
+
+  writeLog(events + 'イベントの数: ' + events.length);
 
   events.forEach(event => {
     const eventType = event.type;
 
     switch (eventType) {
       case 'message':
-        //handleMessageEvent(event);
+        handleMessageEvent(event);
         break;
       case 'follow':
         handleFollowEvent(event);

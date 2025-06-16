@@ -1,6 +1,5 @@
-function test() {
-  initialize(1010);
-  //initialize(5555);
+function testFollowEvent() {
+  
 }
 
 

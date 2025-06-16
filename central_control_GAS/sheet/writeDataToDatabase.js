@@ -7,6 +7,7 @@ function initialize(lineID){
   const timeStr = Utilities.formatDate(now, "Asia/Tokyo", "HH:mm:ss");
 
   if (changeIdToRow(lineID) !== 0) {
+      writeLog(`initialize: ${lineID}はすでに登録されています`);
       throw new Error('このLINEIDは登録済みです');
     }
   
@@ -22,6 +23,7 @@ function writeToSingleCell(data, lineID, dataType) {
 
   if(dataType === "LINEID") {
     if (changeIdToRow(lineID) !== 0) {
+      writeLog(`writeToSingleCell: ${lineID}はすでに登録されています`);
       throw new Error('この関数は初期化以外では使用できません');
     }
     sheet.getRange(sheet.getLastRow() + 1, changeDataTypeToColumn(dataType)).setValue(data);
@@ -32,8 +34,17 @@ function writeToSingleCell(data, lineID, dataType) {
 
 function writeLog(text){
   const sheet = getSheet("log");
-  const time = new Date().getTime(); // 現在時刻（ミリ秒単位）
-  
+  const now = new Date();
+
+  const yyyy = now.getFullYear();
+  const mm   = String(now.getMonth() + 1).padStart(2, '0');
+  const dd   = String(now.getDate()).padStart(2, '0');
+  const hh   = String(now.getHours()).padStart(2, '0');
+  const mi   = String(now.getMinutes()).padStart(2, '0');
+  const ss   = String(now.getSeconds()).padStart(2, '0');
+  const ms   = String(now.getMilliseconds()).padStart(3, '0');
+  const time = `${yyyy}/${mm}/${dd} ${hh}:${mi}:${ss}.${ms}`;
+
   sheet.insertRowBefore(1); // 一番上に新しい行を挿入
   sheet.getRange(1, 1).setValue(time);
   sheet.getRange(1, 2).setValue(text);
@@ -44,6 +55,7 @@ function deleteRow(lineID) {
   const row = changeIdToRow(lineID);
   
   if (row === 0) {
+    writeLog(`${functionname}: ${lineID}は登録されていません`);
     throw new Error('このLINEIDは登録されていません');
   }
   
