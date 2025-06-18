@@ -1,5 +1,5 @@
 //ユーザのLINEIDが登録済みならば，その行番号を，そうでなければ0を返す．
-function changeIdToRow(lineID) {
+function changeIdToRow(lineId) {
   const sheet = getSheet("database");
   const lastRow = sheet.getLastRow(); // データのある最終行を取得
 
@@ -10,10 +10,10 @@ function changeIdToRow(lineID) {
 
   // A列の2行目からデータのある行までを取得
   const range = sheet.getRange(2, 1, lastRow - 1);
-  const lineIDs = range.getValues(); // 二次元配列で返る
+  const lineIds = range.getValues(); // 二次元配列で返る
 
   for (let i = 2; i <= lastRow; i++) {
-    if (lineIDs[i-2][0] === lineID) {
+    if (lineIds[i-2][0] === lineId) {
       return i;
     }
   }

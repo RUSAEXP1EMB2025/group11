@@ -1,0 +1,120 @@
+curl -v -X POST https://api.line.me/v2/bot/richmenu \
+-H 'Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=' \
+-H 'Content-Type: application/json' \
+-d \
+'{
+    "size": {
+        "width": 2500,
+        "height": 843
+    },
+    "selected": true,
+    "name": "スプレッドシートID設定",
+    "chatBarText": "スプレッドシートID設定",
+    "areas": [
+        {
+            "bounds": {
+                "x": 0,
+                "y": 0,
+                "width": 2500,
+                "height": 843
+            },
+            "action": {
+                "type": "postback",
+                "label": "GoogleスプレッドシートIDを設定",
+                "data": "setSheetID",
+                "inputOption": "openKeyboard",
+                "fillInText": "ID: "
+            }
+        }
+    ]
+}'
+Note: Unnecessary use of -X or --request, POST is already inferred.
+*   Trying 147.92.144.180:443...
+* Connected to api.line.me (147.92.144.180) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+*  CAfile: /etc/ssl/certs/ca-certificates.crt
+*  CApath: /etc/ssl/certs
+* TLSv1.0 (OUT), TLS header, Certificate Status (22):
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.2 (IN), TLS header, Certificate Status (22):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.2 (IN), TLS header, Finished (20):
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.2 (OUT), TLS header, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (OUT), TLS header, Supplemental data (23):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* ALPN, server accepted to use h2
+* Server certificate:
+*  subject: C=JP; ST=Tokyo; L=Chiyoda-ku; O=LY Corporation; CN=*.line.me
+*  start date: Aug  8 04:31:02 2024 GMT
+*  expire date: Sep  9 04:31:01 2025 GMT
+*  subjectAltName: host "api.line.me" matched cert's "*.line.me"
+*  issuer: C=BE; O=GlobalSign nv-sa; CN=GlobalSign RSA OV SSL CA 2018
+*  SSL certificate verify ok.
+* Using HTTP2, server supports multiplexing
+* Connection state changed (HTTP/2 confirmed)
+* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+* TLSv1.2 (OUT), TLS header, Supplemental data (23):
+* TLSv1.2 (OUT), TLS header, Supplemental data (23):
+* TLSv1.2 (OUT), TLS header, Supplemental data (23):
+* Using Stream ID: 1 (easy handle 0x5fdb52a039f0)
+* TLSv1.2 (OUT), TLS header, Supplemental data (23):
+> POST /v2/bot/richmenu HTTP/2
+> Host: api.line.me
+> user-agent: curl/7.81.0
+> accept: */*
+> authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=
+> content-type: application/json
+> content-length: 550
+>
+* TLSv1.2 (OUT), TLS header, Supplemental data (23):
+* We are completely uploaded and fine
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+* Connection state changed (MAX_CONCURRENT_STREAMS == 20)!
+* TLSv1.2 (OUT), TLS header, Supplemental data (23):
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+< HTTP/2 200
+< x-xss-protection: 1; mode=block
+< x-line-request-id: 6b673184-c008-453a-a188-0c55831595f8
+< x-frame-options: DENY
+< x-content-type-options: nosniff
+< pragma: no-cache
+< expires: 0
+< date: Tue, 17 Jun 2025 08:47:14 GMT
+< content-type: application/json
+< content-length: 58
+< cache-control: no-cache, no-store, max-age=0, must-revalidate
+< server: legy
+<
+* Connection #0 to host api.line.me left intact
+//{"richMenuId":"richmenu-b69fc70d0a8371226c88c93b1e150b71"}
+{"richMenuId":"richmenu-50e94e40e239206e435cd9cde054a510"}
+{"richMenuId":"richmenu-a97c1272bbbaa49485a02c8cf4591774"}
+{"richMenuId":"richmenu-ac1d8ab956bc89652f35b7027e364864"}
+{"richMenuId":"richmenu-d11427a9e9023511e80f14cab8ab9dcf"}
+
+
+-------------------------------------------------------------------------------------
+|
+|
+|
+|
+|
+-------------------------------------------------------------------------------------
+
+
+curl -v -X POST https://api-data.line.me/v2/bot/richmenu/richmenu-d11427a9e9023511e80f14cab8ab9dcf/content \
+-H "Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=" \
+-H "Content-Type: image/png" \
+-T initialRichMenu.png

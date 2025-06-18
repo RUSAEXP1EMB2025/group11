@@ -1,7 +1,7 @@
 class userInformation {
   constructor() {
-    this.lineID = '';
-    this.sheetID = '';
+    this.lineId = '';
+    this.sheetId = '';
     this.updateTime = '';
   }
 

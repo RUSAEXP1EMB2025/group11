@@ -27,7 +27,7 @@ function doPost(e) {
         //handleLeaveEvent(event);
         break;
       case 'postback':
-        //handlePostbackEvent(event);
+        handlePostbackEvent(event);
         break;
       case 'beacon':
         //handleBeaconEvent(event);

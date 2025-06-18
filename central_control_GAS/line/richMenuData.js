@@ -1,29 +1,15 @@
-const iniRichMenuDescription  = {
-  size: {
-    width: 1024,
-    height: 512
-  },
-  selected: false,
-  name: "初期リッチメニュー",
-  chatBarText: "初期リッチメニュー",
-  areas: [
-    {
-      bounds: { x: 0, y: 0, width: 1250, height: 843 },
-      action: { type: "message", text: "左ボタン" }
-    },
-    {
-      bounds: { x: 1250, y: 0, width: 1250, height: 843 },
-      action: { type: "message", text: "右ボタン" }
-    }
-  ]
-};
+const iniRichMenuId = "richmenu-d11427a9e9023511e80f14cab8ab9dcf";
 
-const iniRichMenuImageFileID = '1hofGVuv7x2_ACV9h3ii7TvIXhVcranu8';
+const lightRichMenuId = "richmenu-be8983f14e52072db6854504336b0345";
 
 function getIniRichMenuDescription() {
   return iniRichMenuDescription;
 }
 
-function getIniRichMenuImageFileID() {
-  return iniRichMenuImageFileID;
+function getIniRichMenuId() {
+  return iniRichMenuId;
+}
+
+function getLightRichMenuId() {
+    return lightRichMenuId;
 }

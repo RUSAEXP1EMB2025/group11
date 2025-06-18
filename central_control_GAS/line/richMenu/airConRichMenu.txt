@@ -1,0 +1,71 @@
+curl -v -X POST https://api.line.me/v2/bot/richmenu \
+-H 'Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=' \
+-H 'Content-Type: application/json' \
+-d \
+'{
+    "size": {
+        "width": 2500,
+        "height": 1686
+    },
+    "selected": true,
+    "name": "照明操作",
+    "chatBarText": "照明操作",
+    "areas": [
+        {
+            "bounds": {
+                "x": 0,
+                "y": 0,
+                "width": 1250,
+                "height": 222
+            },
+            "action": {
+                "type": "richmenuswitch",
+                "richMenuAliasId": "richmenu-alias-light",
+                "data": "richmenu-changed-to-light"
+            }
+        },
+        {
+            "bounds": {
+                "x": 0,
+                "y": 223,
+                "width": 2500,
+                "height": 732
+            },
+            "action": {
+                "type": "postback",
+                "label": "エアコンON",
+                "data": "turnOnAirCon"
+            }
+        },
+        {
+            "bounds": {
+                "x": 0,
+                "y": 955,
+                "width": 2500,
+                "height": 732
+            },
+            "action": {
+                "type": "postback",
+                "label": "エアコンOFF",
+                "data": "turnOffAirCon"
+            }
+        }
+    ]
+}'
+
+{"richMenuId":"richmenu-b27d09b64cbb98e037e675c43e72f8ae"}
+
+curl -v -X POST https://api-data.line.me/v2/bot/richmenu/richmenu-b27d09b64cbb98e037e675c43e72f8ae/content \
+-H "Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=" \
+-H "Content-Type: image/png" \
+-T airConRichMenu.png
+
+
+curl -v -X POST https://api.line.me/v2/bot/richmenu/alias \
+-H 'Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=' \
+-H 'Content-Type: application/json' \
+-d \
+'{
+    "richMenuAliasId": "richmenu-alias-light",
+    "richMenuId": "richmenu-b27d09b64cbb98e037e675c43e72f8ae"
+}'

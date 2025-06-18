@@ -1,4 +1,4 @@
-function initialize(lineID){
+function initialize(lineId){
   const SHEET_ID = "InitSheetId";
   const WAKE_UP_TIME = "7:00:00";
   const BEDTIME = "21:00:00";
@@ -6,29 +6,29 @@ function initialize(lineID){
   const now = new Date();
   const timeStr = Utilities.formatDate(now, "Asia/Tokyo", "HH:mm:ss");
 
-  if (changeIdToRow(lineID) !== 0) {
-      writeLog(`initialize: ${lineID}はすでに登録されています`);
+  if (changeIdToRow(lineId) !== 0) {
+      writeLog(`initialize: ${lineId}はすでに登録されています`);
       throw new Error('このLINEIDは登録済みです');
     }
   
-  writeToSingleCell(lineID, lineID, "LINEID");
-  writeToSingleCell(SHEET_ID, lineID, "SHEETID");
-  writeToSingleCell(timeStr, lineID, "UPDATETIME");
-  writeToSingleCell(WAKE_UP_TIME, lineID, "WAKEUPTIME");
-  writeToSingleCell(BEDTIME, lineID, "BEDTIME");
+  writeToSingleCell(lineId, lineId, "LINEID");
+  writeToSingleCell(SHEET_ID, lineId, "SHEETID");
+  writeToSingleCell(timeStr, lineId, "UPDATETIME");
+  writeToSingleCell(WAKE_UP_TIME, lineId, "WAKEUPTIME");
+  writeToSingleCell(BEDTIME, lineId, "BEDTIME");
 }
 
-function writeToSingleCell(data, lineID, dataType) {
+function writeToSingleCell(data, lineId, dataType) {
   const sheet = getSheet("database");
 
   if(dataType === "LINEID") {
-    if (changeIdToRow(lineID) !== 0) {
-      writeLog(`writeToSingleCell: ${lineID}はすでに登録されています`);
+    if (changeIdToRow(lineId) !== 0) {
+      writeLog(`writeToSingleCell: ${lineId}はすでに登録されています`);
       throw new Error('この関数は初期化以外では使用できません');
     }
     sheet.getRange(sheet.getLastRow() + 1, changeDataTypeToColumn(dataType)).setValue(data);
   } else {
-    sheet.getRange(changeIdToRow(lineID), changeDataTypeToColumn(dataType)).setValue(data);
+    sheet.getRange(changeIdToRow(lineId), changeDataTypeToColumn(dataType)).setValue(data);
   }
 }
 
@@ -50,12 +50,12 @@ function writeLog(text){
   sheet.getRange(1, 2).setValue(text);
 }
 
-function deleteRow(lineID) {
+function deleteRow(lineId) {
   const sheet = getSheet("database");
-  const row = changeIdToRow(lineID);
+  const row = changeIdToRow(lineId);
   
   if (row === 0) {
-    writeLog(`${functionname}: ${lineID}は登録されていません`);
+    writeLog(`${functionname}: ${lineId}は登録されていません`);
     throw new Error('このLINEIDは登録されていません');
   }
   
