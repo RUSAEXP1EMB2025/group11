@@ -1,3 +1,24 @@
+function testGetSaikoroSheet(){
+  const sheetId = getSaikoroSheetId();
+
+  //const match = text.match(/ID:\s*(\w+)/); // 正規表現で取り出す
+  //const sheetId = match[1];
+
+  try {
+      spreadsheet = SpreadsheetApp.openById(sheetId);
+  } catch (e) {
+      throw new Error("スプレッドシートの取得に失敗しました:");
+  }
+
+  sheet = spreadsheet.getSheetByName('sensor');
+
+  if (!sheet) {
+      throw new Error("シートsensorのの取得に失敗しました。");
+  }
+
+
+}
+
 function testPutId(){
   const text = "ID: 12345abcde";
   const sheetId = text.match(/ID:\s*(\w+)/); // 正規表現で取り出す

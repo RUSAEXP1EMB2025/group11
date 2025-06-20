@@ -38,7 +38,7 @@ function changeDataTypeToColumn(dataType) {
 }
 
 function getSheet(name) {
-  const SPREADSHEET_ID = '1D-aC84CBSO740E0gr3FpYpLeztuO0G57-GUdajP3wi4'
+  const SPREADSHEET_ID = getCentralSheetId();
   const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = spreadsheet.getSheetByName(name);
 

@@ -66,6 +66,16 @@ curl -v -X POST https://api.line.me/v2/bot/richmenu/alias \
 -H 'Content-Type: application/json' \
 -d \
 '{
-    "richMenuAliasId": "richmenu-alias-light",
+    "richMenuAliasId": "richmenu-alias-aircon",
+    "richMenuId": "richmenu-b27d09b64cbb98e037e675c43e72f8ae"
+}'
+
+
+# リッチメニューエイリアスAを更新したい場合の例
+curl -v -X POST https://api.line.me/v2/bot/richmenu/alias/richmenu-alias-aircon \
+-H 'Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=' \
+-H 'Content-Type: application/json' \
+-d \
+'{
     "richMenuId": "richmenu-b27d09b64cbb98e037e675c43e72f8ae"
 }'

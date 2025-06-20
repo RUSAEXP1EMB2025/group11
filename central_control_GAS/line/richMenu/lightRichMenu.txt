@@ -127,7 +127,16 @@ curl -v -X POST https://api.line.me/v2/bot/richmenu/alias \
 -H 'Content-Type: application/json' \
 -d \
 '{
-    "richMenuAliasId": "richmenu-alias-aircon",
+    "richMenuAliasId": "richmenu-alias-light",
+    "richMenuId": "richmenu-be8983f14e52072db6854504336b0345"
+}'
+
+
+curl -v -X POST https://api.line.me/v2/bot/richmenu/alias/richmenu-alias-light \
+-H 'Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=' \
+-H 'Content-Type: application/json' \
+-d \
+'{
     "richMenuId": "richmenu-be8983f14e52072db6854504336b0345"
 }'
 

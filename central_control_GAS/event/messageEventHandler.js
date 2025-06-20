@@ -11,7 +11,7 @@ function handleMessageEvent(event) {
             break;
         case 'isWaitingSheetId':
             writeLog('hundleMessageEvent: ' + userId + text);
-            const match = text.match(/ID:\s*(\w+)/); // 正規表現で取り出す
+            const match = text.match(/ID:\s*([^\s]+)/); // 正規表現で取り出す
             const sheetId = match[1];
 
             try {
@@ -35,16 +35,15 @@ function handleMessageEvent(event) {
             writeToSingleCell(sheetId, userId, 'SHEETID');
 
             //リッチメニューセット
-            const richMenu = new richMenu;
-            richMenu.richMenuId = getLightRichMenuId();
+            const lightRichMenu = new richMenu;
+            lightRichMenu.richMenuId = getLightRichMenuId();
 
-            writeLog('richMenu.richMenuId: ' + richMenu.richMenuId);
+            writeLog('richMenu.richMenuId: ' + lightRichMenu.richMenuId);
 
-            richMenu.linkRichMenuToUser(userId);
+            lightRichMenu.linkRichMenuToUser(userId);
             break;
         default:
-            writeLog('未定義のメッセージ: ' + userId + text);
-            replyText(replyToken, "未定義のメッセージです。");
+            writeLog('未定義の状態: ' + userId + text);
             break;            
     }
 }
