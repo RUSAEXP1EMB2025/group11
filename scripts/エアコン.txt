@@ -1,0 +1,134 @@
+// Nature Remo の API トークンと操作対象のデバイス名（Remoアプリで設定したニックネーム）を指定
+const REMO_API_TOKEN = 'YOUR_REMO_API_TOKEN'; // ← ここにあなたのRemo APIトークンを入力
+const TARGET_DEVICE_NAME = 'リビングのエアコン'; // Remoで登録したエアコンのニックネームに合わせて変更
+
+// エアコンの電源をONまたはOFFに切り替える
+//@param {boolean} powerOn - trueならON、falseならOFF
+
+function controlAircon(powerOn) {
+  const appliance = getAirconDevice(); // 対象のエアコンデバイス情報を取得
+  if (!appliance) throw new Error('指定したエアコンが見つかりません'); // 該当なしの場合はエラー
+
+  // Remoのエアコン制御APIエンドポイントを作成
+  const url = `https://api.nature.global/1/appliances/${appliance.id}/aircon_settings`;
+
+  // ONとOFFで送信する内容を分岐
+  const payload = powerOn
+    ? {
+        operation_mode: 'cool', // 冷房モード
+        temperature: '24',      // 設定温度（例：24℃）
+        air_volume: 'auto',     // 風量自動
+      }
+    : {
+        button: 'power-off',    // OFF操作には、ボタン名（学習済みの「OFF」）を送信
+      };
+
+  // HTTPリクエストのオプションを設定
+  const options = {
+    method: 'put', // PUTメソッドで送信（エアコン設定変更）
+    headers: {
+      Authorization: `Bearer ${REMO_API_TOKEN}`, // APIトークンで認証
+    },
+    payload: payload,              // 上で定義したON/OFFの設定
+    muteHttpExceptions: true,      // HTTPエラーでも例外を止めない（ログで確認できるように）
+  };
+
+  // Nature Remo API にリクエスト送信（ON または OFF）
+  const response = UrlFetchApp.fetch(url, options);
+
+  // レスポンスログ出力（デバッグ用）
+  Logger.log(`Aircon ${powerOn ? 'ON' : 'OFF'} Response: ${response.getContentText()}`);
+}
+
+// Nature Remoからすべてのデバイスを取得し、対象のエアコンを探す
+//@returns {Object} - 見つかったエアコンの情報オブジェクト
+
+function getAirconDevice() {
+  const url = 'https://api.nature.global/1/appliances'; // Remo APIで家電一覧を取得するエンドポイント
+  const headers = {
+    Authorization: `Bearer ${REMO_API_TOKEN}`, // APIトークンで認証
+  };
+
+  // API呼び出しでデバイス一覧を取得
+  const response = UrlFetchApp.fetch(url, { headers });
+
+  // JSON形式にパースして配列化
+  const appliances = JSON.parse(response.getContentText());
+
+  // デバイスの中からニックネームと aircon プロパティを持つものを選ぶ
+  return appliances.find(a => a.nickname === TARGET_DEVICE_NAME && a.aircon);
+}
+
+// テスト用関数：エアコンをONにする
+
+function testAirconOn() {
+  controlAircon(true); // ON を指定して実行
+}
+
+// テスト用関数：エアコンをOFFにする
+ 
+function testAirconOff() {
+  controlAircon(false); // OFF を指定して実行
+}
+
+function testair(){
+  try {
+    const gps = "home";
+    const homing = "home";
+    const tem = "30.0"//仮温度
+    const hum = "60"//仮湿度
+    const discom = 0.81 * tem + 0.01 * hum * ((0.99 * tem) - 14.3) + 46.3;
+    const time = getCurrentTime();
+    const { sleep, morning } = getTimesFromLINE();
+
+    Logger.log(`現在時刻: ${time}, 温度: ${tem}, 湿度: ${hum}, 不快指数: ${discom}`);
+
+    if (gps === homing) {
+      if (isDiscomfort(discom, threshold = 60)) {
+        Logger.log("不快指数が高いです。エアコンを起動します。");
+        controlAircon(true);
+        if(predictDiscomfortIndex()){
+          Logger.log("不快指数が非適正値になりそうです。エアコンを起動します。");
+          controlAircon(true);
+        }else{
+          Logger.log("不快指数が適正値になりそうです。エアコンを停止します。");
+          controlAircon(false);
+        }
+      } else {
+        Logger.log("不快指数が低いです。エアコンを停止します。");
+        controlAircon(false);
+      }
+    } else {
+      Logger.log("外出中のためエアコンを停止します。");
+      controlAircon(false);
+    }
+  } catch (e) {
+    Logger.log("エラー発生: " + e.message);
+    throw e; // ここで再スローして詳細ログを確認
+  }
+}
+
+
+
+//不快指数を予測(とりあえずは実装しなくてよい，とりあえずはランダムに生成)
+function predictDiscomfortIndex() {
+    let willWorsen = Math.random() < 0.5;
+    return willWorsen;
+}
+
+function isDiscomfort(discom, threshold = 60) {
+  Logger.log(`不快指数: ${discom.toFixed(1)}`);
+
+  return discom > threshold;
+}
+
+
+/*
+//不快指数を計算
+function calculateDiscomfortIndex() {
+    const tem; //（シートから取得）
+    const hum; //（シートから取得）
+    const discom = 0.81 * tem + 0.01 * hum * ((0.99 * tem) - 14.3) + 46.3;//（計算式）
+    return discom;
+}
+*/

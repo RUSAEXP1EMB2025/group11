@@ -1,0 +1,195 @@
+//====================================================================================
+// ▲▲▲ 設定項目 ▲▲▲
+// Nature Remo の API トークンと操作対象のデバイス名（Remoアプリで設定したニックネーム）を指定
+//====================================================================================
+const REMO_API_TOKEN = 'ory_at_LD0v2971GxitENQg_fZt-6ZiDcdyH1rhhr-TeaMylNY.V_quG5ZftjyPY4F-vWnkruyq0FBF9SlNsR0h849ckuM'; // ← ここにあなたのRemo APIトークンを入力してください
+const TARGET_DEVICE_NAME = 'aircon'; // ← ここにRemoで登録したエアコンのニックネームを入力してください
+
+
+//====================================================================================
+// Nature Remo API 関連の関数
+//====================================================================================
+
+/**
+ * エアコンの電源をONまたはOFFに切り替える
+ * @param {boolean} powerOn - trueならON、falseならOFF
+ */
+function controlAircon(powerOn) {
+  const appliance = getAirconDevice(); // 対象のエアコンデバイス情報を取得
+  if (!appliance) {
+    throw new Error(`指定したニックネームのエアコン「${TARGET_DEVICE_NAME}」が見つかりません。`);
+  }
+
+  // Remoのエアコン制御APIエンドポイント
+  const url = `https://api.nature.global/1/appliances/${appliance.id}/aircon_settings`;
+
+  // ONとOFFで送信するペイロードを定義
+  const payload = powerOn
+    ? {
+        operation_mode: 'cool', // 冷房モード
+        temperature: '24',      // 設定温度（例：24℃）
+        air_volume: 'auto',     // 風量自動
+      }
+    : {
+        button: 'power-off',    // OFF操作
+      };
+
+  // HTTPリクエストのオプションを設定
+  const options = {
+    method: 'post',
+    headers: {
+      'Authorization': `Bearer ${REMO_API_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true,
+  };
+
+  // Nature Remo API にリクエストを送信
+  const response = UrlFetchApp.fetch(url, options);
+  const responseCode = response.getResponseCode();
+  const responseBody = response.getContentText();
+
+  // レスポンスをログに出力
+  Logger.log(`エアコン操作 (${powerOn ? 'ON' : 'OFF'}) - ステータス: ${responseCode}, レスポンス: ${responseBody}`);
+
+  if (responseCode !== 200) {
+    Logger.log(`エアコンの操作に失敗しました。APIからの応答を確認してください。`);
+  }
+}
+
+/**
+ * エアコンの設定温度を1度上げる (現在実際にnature remoで設定されている温度から1度上げる。)
+ */
+function raiseTemperature() {
+  const currentSettings = getAirconCurrentSettings();
+  if (!currentSettings) return; // 取得失敗時は何もしない
+
+  // 現在の温度を数値に変換し、1度上げる
+  const currentTemp = parseInt(currentSettings.temp, 10);
+  const newTemp = (currentTemp + 1).toString();
+
+  Logger.log(`現在の設定温度: ${currentTemp}℃ -> 新しい設定温度: ${newTemp}℃ に変更します。`);
+
+  // 新しい温度でエアコン設定を送信
+  sendAirconSettings({ temperature: newTemp });
+}
+
+/**
+ * エアコンの設定温度を1度下げる　(現在実際にnature remoで設定されている温度から1度上げる。)
+ */
+function lowerTemperature() {
+  const currentSettings = getAirconCurrentSettings();
+  if (!currentSettings) return; // 取得失敗時は何もしない
+
+  // 現在の温度を数値に変換し、1度下げる
+  const currentTemp = parseInt(currentSettings.temp, 10);
+  const newTemp = (currentTemp - 1).toString();
+
+  Logger.log(`現在の設定温度: ${currentTemp}℃ -> 新しい設定温度: ${newTemp}℃ に変更します。`);
+
+  // 新しい温度でエアコン設定を送信
+  sendAirconSettings({ temperature: newTemp });
+}
+
+/**
+ * エアコンに設定を送信する共通関数
+ * @param {Object} settingsPayload - 送信する設定オブジェクト (例: { temperature: '25' })
+ */
+function sendAirconSettings(settingsPayload) {
+  const appliance = getAirconDevice();
+  if (!appliance) {
+    throw new Error(`指定したニックネームのエアコン「${TARGET_DEVICE_NAME}」が見つかりません。`);
+  }
+
+  const url = `https://api.nature.global/1/appliances/${appliance.id}/aircon_settings`;
+
+  const options = {
+    method: 'post',
+    headers: {
+      'Authorization': `Bearer ${REMO_API_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    payload: JSON.stringify(settingsPayload),
+    muteHttpExceptions: true,
+  };
+
+  const response = UrlFetchApp.fetch(url, options);
+  const responseCode = response.getResponseCode();
+  const responseBody = response.getContentText();
+
+  Logger.log(`エアコン設定送信 - ステータス: ${responseCode}, レスポンス: ${responseBody}`);
+
+  if (responseCode !== 200) {
+    Logger.log(`エアコンの設定変更に失敗しました。`);
+  }
+}
+
+
+/**
+ * Nature Remoからすべてのデバイスを取得し、対象のエアコンを探す
+ * @returns {Object|null} - 見つかったエアコンの情報オブジェクト、見つからなければnull
+ */
+function getAirconDevice() {
+  const url = 'https://api.nature.global/1/appliances';
+  const options = {
+    headers: {
+      'Authorization': `Bearer ${REMO_API_TOKEN}`,
+    },
+  };
+
+  const response = UrlFetchApp.fetch(url, options);
+  const appliances = JSON.parse(response.getContentText());
+
+  return appliances.find(a => a.nickname === TARGET_DEVICE_NAME && a.type === 'AC');
+}
+
+/**
+ * エアコンの現在の設定（温度など）を取得する
+ * @returns {Object|null} - エアコンの設定情報。取得失敗時はnull
+ */
+function getAirconCurrentSettings() {
+  const appliance = getAirconDevice();
+  if (!appliance) {
+    Logger.log(`指定したニックネームのエアコン「${TARGET_DEVICE_NAME}」が見つかりませんでした。`);
+    return null;
+  }
+
+  // エアコンがOFFの場合や設定が取得できない場合を考慮
+  if (!appliance.settings || appliance.settings.temp === '') {
+    Logger.log('エアコンがOFF、または現在の温度設定が取得できませんでした。操作を中断します。');
+    return null;
+  }
+
+  return appliance.settings;
+}
+
+/**
+ * 不快指数が閾値を超えているか判定する
+ * @param {number} discom - 計算された不快指数
+ * @param {number} [threshold=60] - 快適さの閾値
+ * @returns {boolean} - 閾値を超えていればtrue
+ */
+function isDiscomfort(discom, threshold = 60) {
+  return discom > threshold;
+}
+
+/**
+ * 将来の不快指数が悪化するかを予測する（現在はランダムに結果を返すダミー関数）
+ * @returns {boolean} - trueなら悪化予測、falseなら改善予測
+ */
+function predictDiscomfortIndex() {
+  const willWorsen = Math.random() < 0.5;
+  return willWorsen;
+}
+
+/*
+//不快指数を計算
+function calculateDiscomfortIndex() {
+    const tem; //（シートから取得）
+    const hum; //（シートから取得）
+    const discom = 0.81 * tem + 0.01 * hum * ((0.99 * tem) - 14.3) + 46.3;//（計算式）
+    return discom;
+}
+*/
+
