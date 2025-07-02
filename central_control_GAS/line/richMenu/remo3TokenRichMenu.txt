@@ -8,8 +8,8 @@ curl -v -X POST https://api.line.me/v2/bot/richmenu \
         "height": 843
     },
     "selected": true,
-    "name": "スプレッドシートID設定",
-    "chatBarText": "スプレッドシートID設定",
+    "name": "Remo3アクセストークン設定",
+    "chatBarText": "Remo3トークン設定",
     "areas": [
         {
             "bounds": {
@@ -20,20 +20,20 @@ curl -v -X POST https://api.line.me/v2/bot/richmenu \
             },
             "action": {
                 "type": "postback",
-                "label": "GoogleスプレッドシートIDを設定",
-                "data": "setSheetID",
+                "label": "Remo3のアクセストークン設定を設定",
+                "data": "setRemo3AccessToken",
                 "inputOption": "openKeyboard",
-                "fillInText": "ID: "
+                "fillInText": "Access Token: "
             }
         }
     ]
 }'
 
-{"richMenuId":"richmenu-d11427a9e9023511e80f14cab8ab9dcf"}
+{"richMenuId":"richmenu-a84d1d8b029eee8a58ee6841644c35f4"}
 
 
 
-curl -v -X POST https://api-data.line.me/v2/bot/richmenu/richmenu-d11427a9e9023511e80f14cab8ab9dcf/content \
+curl -v -X POST https://api-data.line.me/v2/bot/richmenu/richmenu-a84d1d8b029eee8a58ee6841644c35f4/content \
 -H "Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=" \
 -H "Content-Type: image/png" \
--T initialRichMenu.png
+-T remo3TokenRichMenu.png

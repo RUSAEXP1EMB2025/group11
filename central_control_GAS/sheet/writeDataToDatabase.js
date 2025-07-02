@@ -1,7 +1,7 @@
 function initialize(lineId){
   const SHEET_ID = "InitSheetId";
-  const WAKE_UP_TIME = "7:00:00";
-  const BEDTIME = "21:00:00";
+  //const WAKE_UP_TIME = "7:00:00";
+  //const BEDTIME = "21:00:00";
 
   const now = new Date();
   const timeStr = Utilities.formatDate(now, "Asia/Tokyo", "HH:mm:ss");
@@ -14,8 +14,8 @@ function initialize(lineId){
   writeToSingleCell(lineId, lineId, "LINEID");
   writeToSingleCell(SHEET_ID, lineId, "SHEETID");
   writeToSingleCell(timeStr, lineId, "UPDATETIME");
-  writeToSingleCell(WAKE_UP_TIME, lineId, "WAKEUPTIME");
-  writeToSingleCell(BEDTIME, lineId, "BEDTIME");
+  //writeToSingleCell(WAKE_UP_TIME, lineId, "WAKEUPTIME");
+  //writeToSingleCell(BEDTIME, lineId, "BEDTIME");
 }
 
 function writeToSingleCell(data, lineId, dataType) {

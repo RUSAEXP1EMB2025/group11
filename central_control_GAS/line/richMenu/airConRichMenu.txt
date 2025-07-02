@@ -9,7 +9,7 @@ curl -v -X POST https://api.line.me/v2/bot/richmenu \
     },
     "selected": true,
     "name": "照明操作",
-    "chatBarText": "照明操作",
+    "chatBarText": "照明・エアコン操作",
     "areas": [
         {
             "bounds": {
@@ -53,9 +53,9 @@ curl -v -X POST https://api.line.me/v2/bot/richmenu \
     ]
 }'
 
-{"richMenuId":"richmenu-b27d09b64cbb98e037e675c43e72f8ae"}
+{"richMenuId":"richmenu-f1dc2c98e59c332ba5618ee75b1f901c"}
 
-curl -v -X POST https://api-data.line.me/v2/bot/richmenu/richmenu-b27d09b64cbb98e037e675c43e72f8ae/content \
+curl -v -X POST https://api-data.line.me/v2/bot/richmenu/richmenu-f1dc2c98e59c332ba5618ee75b1f901c/content \
 -H "Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=" \
 -H "Content-Type: image/png" \
 -T airConRichMenu.png
@@ -67,15 +67,13 @@ curl -v -X POST https://api.line.me/v2/bot/richmenu/alias \
 -d \
 '{
     "richMenuAliasId": "richmenu-alias-aircon",
-    "richMenuId": "richmenu-b27d09b64cbb98e037e675c43e72f8ae"
+    "richMenuId": "richmenu-f1dc2c98e59c332ba5618ee75b1f901c"
 }'
 
-
-# リッチメニューエイリアスAを更新したい場合の例
 curl -v -X POST https://api.line.me/v2/bot/richmenu/alias/richmenu-alias-aircon \
 -H 'Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=' \
 -H 'Content-Type: application/json' \
 -d \
 '{
-    "richMenuId": "richmenu-b27d09b64cbb98e037e675c43e72f8ae"
+    "richMenuId": "richmenu-f1dc2c98e59c332ba5618ee75b1f901c"
 }'

@@ -1,3 +1,12 @@
+function getValue(lineId, dataType){
+  const sheet = getSheet('database');
+  const row = changeIdToRow(lineId);
+  const column = changeDataTypeToColumn(dataType)
+  const value = sheet.getRange(row, column).getValue();
+
+  return value;
+}
+
 //ユーザのLINEIDが登録済みならば，その行番号を，そうでなければ0を返す．
 function changeIdToRow(lineId) {
   const sheet = getSheet("database");
@@ -23,11 +32,11 @@ function changeIdToRow(lineId) {
 
 function changeDataTypeToColumn(dataType) {
   const sheet = getSheet("database");
-  const lastColunm = sheet.getLastColumn();
-  const range = sheet.getRange(1, 1, 1, lastColunm);
+  const lastColumn = sheet.getLastColumn();
+  const range = sheet.getRange(1, 1, 1, lastColumn);
   const dataTypes = range.getValues(); // 二次元配列で返る
 
-  for (let i = 1; i <= lastColunm; i++) {
+  for (let i = 1; i <= lastColumn; i++) {
     if (dataTypes[0][i-1] === dataType) {
       return i;
     }
@@ -37,8 +46,8 @@ function changeDataTypeToColumn(dataType) {
   throw new Error('dataTypeが見つかりません');
 }
 
-function getSheet(name) {
-  const SPREADSHEET_ID = getCentralSheetId();
+function getSheet(name, sheetId) {
+  const SPREADSHEET_ID = sheetId || getCentralSheetId();
   const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = spreadsheet.getSheetByName(name);
 

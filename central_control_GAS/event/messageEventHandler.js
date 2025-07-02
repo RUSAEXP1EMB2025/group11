@@ -4,10 +4,10 @@ function handleMessageEvent(event) {
     const text = event.message.text;
     const pssp = PropertiesService.getScriptProperties();
     const state = pssp.getProperty(userId);
+    let sheet;
 
     switch (state) {
         case 'idle':
-            writeLog('hundleMessageEvent: ' + userId + text);
             break;
         case 'isWaitingSheetId':
             writeLog('hundleMessageEvent: ' + userId + text);

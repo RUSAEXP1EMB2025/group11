@@ -9,7 +9,7 @@ curl -v -X POST https://api.line.me/v2/bot/richmenu \
     },
     "selected": true,
     "name": "照明操作",
-    "chatBarText": "照明操作",
+    "chatBarText": "照明・エアコン操作",
     "areas": [
         {
             "bounds": {
@@ -113,10 +113,9 @@ curl -v -X POST https://api.line.me/v2/bot/richmenu \
     ]
 }'
 
-{"richMenuId":"richmenu-a0f9b489a83237b3ba3c0a7dcccf811b"}
-{"richMenuId":"richmenu-be8983f14e52072db6854504336b0345"}
+{"richMenuId":"richmenu-01a94a8c444f383049cf5f9123eab78b"}
 
-curl -v -X POST https://api-data.line.me/v2/bot/richmenu/richmenu-be8983f14e52072db6854504336b0345/content \
+curl -v -X POST https://api-data.line.me/v2/bot/richmenu/richmenu-01a94a8c444f383049cf5f9123eab78b/content \
 -H "Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=" \
 -H "Content-Type: image/png" \
 -T lightRichMenu.png
@@ -128,24 +127,22 @@ curl -v -X POST https://api.line.me/v2/bot/richmenu/alias \
 -d \
 '{
     "richMenuAliasId": "richmenu-alias-light",
-    "richMenuId": "richmenu-be8983f14e52072db6854504336b0345"
+    "richMenuId": "richmenu-01a94a8c444f383049cf5f9123eab78b"
 }'
-
 
 curl -v -X POST https://api.line.me/v2/bot/richmenu/alias/richmenu-alias-light \
 -H 'Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=' \
 -H 'Content-Type: application/json' \
 -d \
 '{
-    "richMenuId": "richmenu-be8983f14e52072db6854504336b0345"
+    "richMenuId": "richmenu-01a94a8c444f383049cf5f9123eab78b"
 }'
-
 
 curl -v -X POST https://api.line.me/v2/bot/richmenu \
 -H 'Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=' \
 -H 'Content-Type: application/json' \
 -d \
-'{"size": {"width": 2500,"height": 1686},"selected": true,"name": "照明操作","chatBarText": "照明操作","areas": [
+'{"size": {"width": 2500,"height": 1686},"selected": true,"name": "照明操作","chatBarText": "照明・エアコン操作","areas": [
 {"bounds": {"x": 1251,"y": 0,"width": 1250,"height": 222},"action": {"type": "richmenuswitch","richMenuAliasId": "richmenu-alias-aircon","data": "richmenu-changed-to-airCon"}},
 {"bounds": {"x": 0,"y": 223,"width": 833,"height": 732},"action": {"type": "postback","label": "照明ON","data": "turnOnLight"}},
 {"bounds": {"x": 834,"y": 223,"width": 833,"height": 732},"action": {"type": "postback","label": "常夜灯ON","data": "turnOnNightLight"}},
