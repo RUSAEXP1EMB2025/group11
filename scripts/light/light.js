@@ -1,26 +1,41 @@
 function myFunction() {
   try {
-
     const time = getCurrentTime();
     const { sleep, morning } = getTimesFromLINE();
-    const { TURNONLIGHT, TURNOFFLIGHT, USENIGHTLIGHT, ISATHOME} = getFlagsFromLINE();
+    const sheet = getSheet("sensor"); // スプレッドシートへの書き込みのためにシートを取得
+
+    // フラグの現在の値を取得
+    const TURNONLIGHT = sheet.getRange("H1").getValue() === true || sheet.getRange("H1").getValue().toString().toUpperCase() === "TRUE";
+    const TURNOFFLIGHT = sheet.getRange("H2").getValue() === true || sheet.getRange("H2").getValue().toString().toUpperCase() === "TRUE";
+    const USENIGHTLIGHT = sheet.getRange("H3").getValue() === true || sheet.getRange("H3").getValue().toString().toUpperCase() === "TRUE";
+    const ISATHOME = sheet.getRange("H8").getValue() === true || sheet.getRange("H8").getValue().toString().toUpperCase() === "TRUE";
 
     Logger.log(`現在時刻: ${time}, 起床: ${morning}, 就寝: ${sleep}`);
+    Logger.log(`フラグの状態: TURNONLIGHT=${TURNONLIGHT}, TURNOFFLIGHT=${TURNOFFLIGHT}, USENIGHTLIGHT=${USENIGHTLIGHT}, ISATHOME=${ISATHOME}`);
 
+    // ★ここから修正・追加★
+    // フラグがTRUEの場合、その操作を実行し、該当フラグをFALSEに戻し、関数を終了する
     if(TURNONLIGHT){
+      Logger.log("TURNONLIGHTがTRUEのため、照明を点灯します。");
       turnLightOn();
-    }else if(TURNOFFLIGHT){
+      sheet.getRange("H1").setValue(false); // フラグをFALSEに戻す
+      Logger.log("H1をFALSEに設定しました。");
+      return; // ここで関数を終了し、以降の処理を実行しない
+    } else if(TURNOFFLIGHT){
+      Logger.log("TURNOFFLIGHTがTRUEのため、照明を消灯します。");
       turnLightOff();
-    }else if(USENIGHTLIGHT){
-      turnNightLightOn();
+      sheet.getRange("H2").setValue(false); // フラグをFALSEに戻す
+      Logger.log("H2をFALSEに設定しました。");
+      return; // ここで関数を終了し、以降の処理を実行しない
     }
-
+    
+    // 上記のフラグがいずれもTRUEでなかった場合のみ、以下の自動制御ロジックを実行する
     if (ISATHOME) { //gps === homing
       if (isBetween(time, morning, sleep)) {
-        Logger.log("起きている時間。照明を点灯します。");
+        Logger.log("在宅中かつ起きている時間。照明を点灯します。");
         turnLightOn();
       } else {
-        Logger.log("就寝時間。照明を常夜灯にします。");
+        Logger.log("在宅中かつ就寝時間。照明を常夜灯にします。");
         turnNightLightOn();
       }
     } else {
@@ -32,6 +47,8 @@ function myFunction() {
     throw e; // ここで再スローして詳細ログを確認
   }
 }
+
+
 
 
 
@@ -58,34 +75,7 @@ function getTimesFromLINE() {
   };
 }
 
-function getFlagsFromLINE() {
-  const sheet = getSheet("sensor");
 
-  // 各フラグのセル位置（例としてC2,H2など固定）
-  const cells = {
-    TURNONLIGHT: "H1",        // 1H
-    TURNOFFLIGHT: "H2",       // 2H
-    USENIGHTLIGHT: "H3",   // 3H
-    // 5Hは指定ないのでスルー（もしくは必要なら追加）
-    ISATHOME: "H8"            // 8H
-  };
-
-  const flags = {};
-
-  for (const [key, cell] of Object.entries(cells)) {
-    let val = sheet.getRange(cell).getValue();
-
-    // 文字列 "TRUE"/"FALSE" ならBooleanに変換、それ以外はBooleanキャスト
-    if (typeof val === "string") {
-      val = val.toUpperCase() === "TRUE";
-    } else {
-      val = Boolean(val);
-    }
-    flags[key] = val;
-  }
-
-  return flags;
-}
 
 
 
