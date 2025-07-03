@@ -1,0 +1,39 @@
+curl -v -X POST https://api.line.me/v2/bot/richmenu \
+-H 'Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=' \
+-H 'Content-Type: application/json' \
+-d \
+'{
+    "size": {
+        "width": 2500,
+        "height": 843
+    },
+    "selected": true,
+    "name": "Remo3アクセストークン設定",
+    "chatBarText": "Remo3トークン設定",
+    "areas": [
+        {
+            "bounds": {
+                "x": 0,
+                "y": 0,
+                "width": 2500,
+                "height": 843
+            },
+            "action": {
+                "type": "postback",
+                "label": "Remo3のアクセストークン設定を設定",
+                "data": "setRemo3AccessToken",
+                "inputOption": "openKeyboard",
+                "fillInText": "Access Token: "
+            }
+        }
+    ]
+}'
+
+{"richMenuId":"richmenu-a84d1d8b029eee8a58ee6841644c35f4"}
+
+
+
+curl -v -X POST https://api-data.line.me/v2/bot/richmenu/richmenu-a84d1d8b029eee8a58ee6841644c35f4/content \
+-H "Authorization: Bearer zIbA+SpTb8gz87cI9OTd444byrDleHlqy9qHO9jLR0RuA0CNSEndi9Y9nbCcmOfB6YMY9lE7wPPWqdtsj6zOScLsDV149WW70TxenYh1oBukFM3saqPawhRvmfQYpIr/HrdaplnMyov+JR8CfmHXrQdB04t89/1O/w1cDnyilFU=" \
+-H "Content-Type: image/png" \
+-T remo3TokenRichMenu.png
