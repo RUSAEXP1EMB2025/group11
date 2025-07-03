@@ -1,11 +1,11 @@
 function getRemo3AccessToken(){
-  const REMO_ACCESS_TOKEN = 'ory_at_jDd1RIet-S88mRI5GaMWkQLzLKT4zuVUDBxeSCfHLwo.o_AFcxaWynKU_36ypEp_lspricznY7sSroFpDSyToxA';
+  const REMO_ACCESS_TOKEN = '';
 
   return REMO_ACCESS_TOKEN;
 }
 
 function getSpreadSheetId(){
-    const SPREADSHEET_ID = '1yzJR1-XH4WHML0cVOk-E8w7GR-TDvWsJzcpeHGdaJAc'
+    const SPREADSHEET_ID = ''
     
     return SPREADSHEET_ID;
 }
