@@ -24,7 +24,7 @@ function writeInitialData(){
 
 function shareSheet() {
   const sheetId = getSpreadSheetId();
-  const email = 'nemo3developementexercise@gmail.com';     // ← 共有したい相手のメールアドレス
+  const email = 'nemo3developementexercise@gmail.com';
 
   // スプレッドシートのファイルを取得
   const file = SpreadsheetApp.openById(sheetId);
@@ -33,4 +33,25 @@ function shareSheet() {
   file.addEditor(email);
 
   Logger.log('共有しました: ' + email + ' に ' + sheetId);
+}
+
+function setGASTriggers() {
+  const targetFunctions = ["myFunction"];
+  const existingTriggers = ScriptApp.getProjectTriggers();
+
+  for (const functionName of targetFunctions) {
+    const alreadyExists = existingTriggers.some(
+      trigger => trigger.getHandlerFunction() === functionName
+    );
+
+    if (!alreadyExists) {
+      ScriptApp.newTrigger(functionName)
+               .timeBased()
+               .everyMinutes(1)
+               .create();
+      Logger.log(`${functionName} に対するトリガーを作成しました`);
+    } else {
+      Logger.log(`${functionName} に対するトリガーは既に存在します`);
+    }
+  }
 }
