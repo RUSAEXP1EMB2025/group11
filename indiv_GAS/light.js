@@ -50,21 +50,26 @@ function myFunction() {
 
 //スプレッドシートから取得ver↓
 function getTimesFromLINE() {
-  const sheet = getSheet("sensor"); // 共通のgetSheet関数を使用
-
-  const wakeMinutes = sheet.getRange("H4").getValue();
-  const sleepMinutes = sheet.getRange("H5").getValue();
-
-  if (!wakeMinutes || !sleepMinutes) {
-    throw new Error("H4/H5 に起床・就寝時間（分）が設定されていません");
-  }
-
+  const sheet = getSheet("sensor");
+  const wakeCell = sheet.getRange("H4").getValue();
+  const sleepCell = sheet.getRange("H5").getValue();
+  const toMinutes = time => {
+    if (typeof time === "number") {
+      // 分として入力されている（360など）
+      return time;
+    } else if (time instanceof Date) {
+      return time.getHours() * 60 + time.getMinutes();
+    } else {
+      throw new Error("H4/H5 の形式が不正です");
+    }
+  };
+  const wakeMinutes = toMinutes(wakeCell);
+  const sleepMinutes = toMinutes(sleepCell);
   const toHHMM = min => {
     const h = Math.floor(min / 60).toString().padStart(2, "0");
     const m = (min % 60).toString().padStart(2, "0");
     return `${h}:${m}`;
   };
-
   return {
     morning: toHHMM(wakeMinutes),
     sleep: toHHMM(sleepMinutes)
