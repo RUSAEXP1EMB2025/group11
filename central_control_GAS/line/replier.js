@@ -19,7 +19,7 @@ function replyText(replyToken, text) {
     payload: JSON.stringify(payload)
   };
 
-  //UrlFetchApp.fetch(url, options);
+  UrlFetchApp.fetch(url, options);
 
-  writeLog('返信メッセージ(非送信モード): ' + text);
+  writeLog('返信メッセージ: ' + text);
 }

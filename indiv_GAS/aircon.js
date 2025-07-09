@@ -1,13 +1,13 @@
 // Nature Remo の API トークンと操作対象のデバイス名
 const REMO_API_TOKEN = getRemo3AccessToken();
-const TARGET_DEVICE_NAME = 'airco';
-const TARGET_DEVICE_TEMPERATURE_UP = 'airup';
-const TARGET_DEVICE_TEMPERATURE_DOWN = 'airdown';
+const TARGET_DEVICE_NAME = 'airc';
+const TARGET_DEVICE_TEMPERATURE_UP = 'airu';
+const TARGET_DEVICE_TEMPERATURE_DOWN = 'aird';
 
 // OpenWeatherMapのAPIキーと対象地点の緯度経度
-const OPENWEATHER_API_KEY = 'f53d83555ed6cc90fee6552b803492d5';
-const LAT = 34.8525; // 大阪府茨木市の緯度経度例
-const LON = 135.5681;
+const OPENWEATHER_API_KEY = 'f53d83555ed6cc90fee6552b803492d5'; 
+const LAT = getSheet('sensor').getRange("E2").getValue();
+const LON = getSheet('sensor').getRange("F2").getValue();
 
 // 状態管理用スプレッドシートの設定
 const SPREADSHEET_ID = getSpreadSheetId(); // ← ここにあなたのスプレッドシートIDを入力
@@ -61,6 +61,7 @@ function getOperationMode() {
  * メインの自動制御ロジック（定期実行用）
  */
 function executeAutoControl() {
+  controlAirconBySheet();
   // --- ここから変更 ---
   // ★最初に、操作モードを確認する
   const currentMode = getOperationMode();
@@ -74,8 +75,9 @@ function executeAutoControl() {
   try {
     const gps = "home"; // 本来はGPS情報などを取得
     // Nature Remoから現在の温湿度を取得するなどの処理をここに実装するのが望ましい
-    const tem = "30.0", hum = "60"; 
-    const discom = calcDiscomfort(parseFloat(tem), parseFloat(hum));
+    const tem = getSheet('sensor').getRange("B2").getValue();
+    const hum = getSheet('sensor').getRange("C2").getValue(); 
+    const discom = calcDiscomfort(tem, hum);
     Logger.log(`現在の不快指数: ${discom.toFixed(1)}`);
 
     if (gps === "home") {
@@ -159,7 +161,7 @@ function getAirconDevice() {
   const response = UrlFetchApp.fetch(url, { headers: headers });
   Logger.log("Nature Remo APIからデバイスリストの取得に成功しました。");
   const appliances = JSON.parse(response.getContentText());
-  return appliances.find(a => a.nickname === TARGET_DEVICE_NAME && a.type === 'IR');
+  return appliances.find(a => a.nickname === TARGET_DEVICE_NAME && a.type === 'AC');
 }
 
 // 天気予報から不快指数を予測する
