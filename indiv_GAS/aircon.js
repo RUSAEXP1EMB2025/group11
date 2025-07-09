@@ -1,20 +1,18 @@
 // Nature Remo の API トークンと操作対象のデバイス名
 const REMO_API_TOKEN = getRemo3AccessToken();
-const TARGET_DEVICE_NAME = 'aircon';
-const TARGET_DEVICE_TEMPERATURE_UP = 'airup';
-const TARGET_DEVICE_TEMPERATURE_DOWN = 'airdown';
+const TARGET_DEVICE_NAME = 'airc';
+const TARGET_DEVICE_TEMPERATURE_UP = 'airu';
+const TARGET_DEVICE_TEMPERATURE_DOWN = 'aird';
 
 // OpenWeatherMapのAPIキーと対象地点の緯度経度
-const OPENWEATHER_API_KEY = 'f53d83555ed6cc90fee6552b803492d5';
-const LAT = 34.8525; // 大阪府茨木市の緯度経度例
-const LON = 135.5681;
+const OPENWEATHER_API_KEY = 'f53d83555ed6cc90fee6552b803492d5'; 
+const LAT = getSheet('sensor').getRange("E2").getValue();
+const LON = getSheet('sensor').getRange("F2").getValue();
 
-// --- ここから追加・変更 ---
 // 状態管理用スプレッドシートの設定
 const SPREADSHEET_ID = getSpreadSheetId(); // ← ここにあなたのスプレッドシートIDを入力
 const SHEET_NAME = 'sensor'; // スプレッドシートのシート名（タブ名）
 const MODE_CELL = 'H9'; // 操作モードを記録するセル番地
-// --- ここまで追加・変更 ---
 
 /**
  * スプレッドシートに現在の操作モードを書き込む
@@ -22,7 +20,7 @@ const MODE_CELL = 'H9'; // 操作モードを記録するセル番地
  */
 
 function setOperationMode(mode) {
-  if (mode !== 'AUTO' && mode !== 'MANUAL') {
+  if (mode !== 'AUTO' && mode !== 'MANUAL') {
     Logger.log(`不正なモード指定です: ${mode}`);
     return;
   }
@@ -63,6 +61,7 @@ function getOperationMode() {
  * メインの自動制御ロジック（定期実行用）
  */
 function executeAutoControl() {
+  controlAirconBySheet();
   // --- ここから変更 ---
   // ★最初に、操作モードを確認する
   const currentMode = getOperationMode();
@@ -76,8 +75,9 @@ function executeAutoControl() {
   try {
     const gps = "home"; // 本来はGPS情報などを取得
     // Nature Remoから現在の温湿度を取得するなどの処理をここに実装するのが望ましい
-    const tem = "30.0", hum = "60"; 
-    const discom = calcDiscomfort(parseFloat(tem), parseFloat(hum));
+    const tem = getSheet('sensor').getRange("B2").getValue();
+    const hum = getSheet('sensor').getRange("C2").getValue(); 
+    const discom = calcDiscomfort(tem, hum);
     Logger.log(`現在の不快指数: ${discom.toFixed(1)}`);
 
     if (gps === "home") {
@@ -161,7 +161,7 @@ function getAirconDevice() {
   const response = UrlFetchApp.fetch(url, { headers: headers });
   Logger.log("Nature Remo APIからデバイスリストの取得に成功しました。");
   const appliances = JSON.parse(response.getContentText());
-  return appliances.find(a => a.nickname === TARGET_DEVICE_NAME && a.type === 'IR');
+  return appliances.find(a => a.nickname === TARGET_DEVICE_NAME && a.type === 'AC');
 }
 
 // 天気予報から不快指数を予測する
@@ -256,6 +256,62 @@ function sendSignalByDeviceName(deviceName) {
   }
 }
 
+// エアコン操作のトリガーとなるセルの番地を定数として定義
+const START_AIRCON_CELL = 'H6';
+const STOP_AIRCON_CELL = 'H7';
+
+/**
+ * スプレッドシートのセルの値に基づき、エアコンの稼働・停止を制御する関数。
+ * 操作後はトリガーとなったセルの値をFALSEに戻し、操作モードを'MANUAL'に設定します。
+ */
+function controlAirconBySheet() {
+  try {
+    // スプレッドシートの操作対象シートを取得
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      Logger.log(`シート「${SHEET_NAME}」が見つかりませんでした。`);
+      return;
+    }
+
+    // H6 (稼働) と H7 (停止) のセルの値を取得します。
+    const shouldStart = sheet.getRange(START_AIRCON_CELL).getValue();
+    const shouldStop = sheet.getRange(STOP_AIRCON_CELL).getValue();
+    
+    Logger.log(`稼働セル(${START_AIRCON_CELL})の値: ${shouldStart}`);
+    Logger.log(`停止セル(${STOP_AIRCON_CELL})の値: ${shouldStop}`);
+
+    // 停止の指示を優先して評価します。
+    if (shouldStop === true) {
+      Logger.log(`停止セル(${STOP_AIRCON_CELL})がTRUEのため、エアコンを停止します。`);
+      controlAircon(false); // エアコン停止
+      
+      Logger.log(`操作が完了したため、セル ${STOP_AIRCON_CELL} の値をFALSEに戻します。`);
+      sheet.getRange(STOP_AIRCON_CELL).setValue(false); // トリガーセルをFALSEにリセット
+
+      Logger.log('手動操作のため、自動制御モードを「MANUAL」に切り替えます。');
+      setOperationMode('MANUAL'); // 自動制御モードをMANUALに設定
+
+    } else if (shouldStart === true) {
+      Logger.log(`稼働セル(${START_AIRCON_CELL})がTRUEのため、エアコンを稼働させます。`);
+      controlAircon(true); // エアコン稼働
+      
+      Logger.log(`操作が完了したため、セル ${START_AIRCON_CELL} の値をFALSEに戻します。`);
+      sheet.getRange(START_AIRCON_CELL).setValue(false); // トリガーセルをFALSEにリセット
+      
+      Logger.log('手動操作のため、自動制御モードを「MANUAL」に切り替えます。');
+      setOperationMode('MANUAL'); // 自動制御モードをMANUALに設定
+
+    } else {
+      Logger.log('稼働・停止の条件を満たしていないため、エアコン操作は行いません。');
+    }
+
+  } catch (e) {
+    Logger.log(`スプレッドシートによるエアコン制御中にエラーが発生しました: ${e.message}`);
+    throw e;
+  }
+}
+
+
 /**
  * エアコンの温度を1度上げる
  */
@@ -271,86 +327,3 @@ function controlAirconTempDown() {
   Logger.log('エアコンの温度を1度下げる操作を開始します。');
   sendSignalByDeviceName(TARGET_DEVICE_TEMPERATURE_DOWN);
 }
-
-// /**
-//  * 【テスト用】エアコンの温度を1度上げる関数をテストします。
-//  */
-// function testControlAirconTempUp() {
-//   Logger.log('--- 温度を1度上げるテストを開始します ---');
-//   controlAirconTempUp();
-//   Logger.log('--- 温度を1度上げるテストを終了します ---');
-  
-//   // 手動で温度操作を行ったため、自動制御モードを'MANUAL'に設定
-//   setOperationMode('MANUAL');
-//   Logger.log('温度を上げたため、操作モードを「MANUAL」に切り替えました。');
-// }
-
-// /**
-//  * 【テスト用】エアコンの温度を1度下げる関数をテストします。
-//  */
-// function testControlAirconTempDown() {
-//   Logger.log('--- 温度を1度下げるテストを開始します ---');
-//   controlAirconTempDown();
-//   Logger.log('--- 温度を1度下げるテストを終了します ---');
-  
-//   // 手動で温度操作を行ったため、自動制御モードを'MANUAL'に設定
-//   setOperationMode('MANUAL');
-//   Logger.log('温度を下げたため、操作モードを「MANUAL」に切り替えました。');
-// }
-
-// /* ===============================================================
-//   LINE Webhook処理のサンプル（この関数をWebアプリとして公開する）
-//  =============================================================== */
-// function doPost(e) {
-//   const event = JSON.parse(e.postData.contents).events[0];
-//   const messageText = event.message.text;
-//   const replyToken = event.replyToken;
-
-//   let replyMessage = '';
-
-//   switch (messageText) {
-//     case 'エアコン消して':
-//       controlAircon(false);
-//       setOperationMode('MANUAL'); // ★モードを手動に切り替え
-//       replyMessage = 'エアコンをOFFにし、手動操作モードに切り替えました。自動制御を再開するには「オートにして」と入力してください。';
-//       Logger.log('LINEコマンド「エアコン消して」の処理が完了しました。');
-//       break;
-
-//     case 'エアコンつけて':
-//       controlAircon(true, '25'); // とりあえず25度でON
-//       setOperationMode('MANUAL'); // ★モードを手動に切り替え
-//       replyMessage = 'エアコンをONにし、手動操作モードに切り替えました。自動制御を再開するには「オートにして」と入力してください。';
-//       Logger.log('LINEコマンド「エアコンつけて」の処理が完了しました。');
-//       break;
-
-//     case 'オートにして':
-//       setOperationMode('AUTO'); // ★モードを自動に切り替え
-//       replyMessage = '自動制御モードに切り替えました。現在の状況に応じてエアコンを操作します。';
-//       // モード切替後、すぐに自動制御を実行する
-//       executeAutoControl();
-//       Logger.log('LINEコマンド「オートにして」の処理が完了しました。');
-//       break;
-//       
-//     default:
-//       Logger.log(`未定義のメッセージ「${messageText}」を受信したため、処理をスキップします。`);
-//       // その他のメッセージには応答しない
-//       return;
-//   }
-
-//   // LINEに返信する
-//   const url = 'https://api.line.me/v2/bot/message/reply';
-//   const lineAccessToken = 'YOUR_LINE_CHANNEL_ACCESS_TOKEN'; // 自身のLINE Channel Access Token
-
-//   UrlFetchApp.fetch(url, {
-//     'headers': {
-//       'Content-Type': 'application/json; charset=UTF-8',
-//       'Authorization': 'Bearer ' + lineAccessToken,
-//     },
-//     'method': 'post',
-//     'payload': JSON.stringify({
-//       'replyToken': replyToken,
-//       'messages': [{'type': 'text', 'text': replyMessage}],
-//     }),
-//   });
-//   Logger.log('LINEへの返信リクエストが完了しました。');
-// }

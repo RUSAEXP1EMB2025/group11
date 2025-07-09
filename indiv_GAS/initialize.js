@@ -2,7 +2,7 @@ function writeInitialData(){
   const sheet = getSheet('sensor');
 
   const header = [
-    'DATE', 'TMP', 'HUM'
+    'DATE', 'TMP', 'HUM', '', 'LAT', 'LON'
   ];
 
   sheet.getRange(1, 1, 1, header.length).setValues([header]);
@@ -20,6 +20,10 @@ function writeInitialData(){
   ];
 
   sheet.getRange(1, 7, settings.length, 2).setValues(settings);
+
+  
+  recordSensorData();
+  setLocation();
 }
 
 function shareSheet() {
@@ -36,7 +40,7 @@ function shareSheet() {
 }
 
 function setGASTriggers() {
-  const targetFunctions = ["myFunction"];
+  const targetFunctions = ["recordSensorData", "myFunction", "executeAutoControl"];
   const existingTriggers = ScriptApp.getProjectTriggers();
 
   for (const functionName of targetFunctions) {
@@ -53,5 +57,16 @@ function setGASTriggers() {
     } else {
       Logger.log(`${functionName} に対するトリガーは既に存在します`);
     }
+  }
+}
+
+function setLocation(){
+  const locStr = getLocation();
+  const location = getGeocode(locStr[0], locStr[1]);
+  if(location == null){
+    console.error('住所間違い');
+  } else {
+    const sheet = getSheet('sensor');
+    sheet.getRange(2, 5, 1, 2).setValues([location]);
   }
 }
